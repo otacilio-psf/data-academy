@@ -1,2 +1,5 @@
-# azure-data-engineer
-project repo to work in Azure enviroment
+# Azure Data Engineer
+
+This repository contains files from a generic Data project on Azure
+
+## Architecture
