@@ -26,8 +26,8 @@ def generate_month_data(path="/FileStore/tmp", num_orders=100, year=None, month=
     
     print("Date:", month, "/", year)
     
-    client_path = f"/dbfs{path}/client/{year}-{str(month).zfill(2)}"
-    order_path = f"/dbfs{path}/orders/{year}-{str(month).zfill(2)}"
+    client_path = f"/dbfs{path}/client/year_month={year}-{str(month).zfill(2)}"
+    order_path = f"/dbfs{path}/orders/year_month={year}-{str(month).zfill(2)}"
     os.makedirs(client_path, exist_ok=True)
     os.makedirs(order_path, exist_ok=True)
     
@@ -49,11 +49,12 @@ def generate_month_data(path="/FileStore/tmp", num_orders=100, year=None, month=
                 json.dump(j, f)
     
     status_list = ["created","shipped","delivered"]
+    fake_client_id = [c["client_id"] for c in fake_clients]
     
     fake_orders = [
         {
             "order_id": str(uuid4()),
-            "client_id": np.random.choice([c["client_id"] for c in fake_clients]),
+            "client_id": np.random.choice(fake_client_id),
             "order_date": fake.date_between(start_date=date(year, month,1), end_date=date(year + int(month/12), month%12+1, 1) - timedelta(days=1)).strftime("%d/%m/%Y"),
             "order_status": np.random.choice(status_list, p=[0.10, 0.20, 0.70]),
             "order_total": round(random()*1000,2)
@@ -62,16 +63,47 @@ def generate_month_data(path="/FileStore/tmp", num_orders=100, year=None, month=
     
     pd.DataFrame(fake_orders).to_csv(f"{order_path}/order-{int(time.time())}.csv", index=False)
 
+
 # COMMAND ----------
 
 dbutils.fs.rm("/FileStore/otacilio/data", True)
 
 # COMMAND ----------
 
-for i in range(1000):
+for i in range(10):
+    print(i)
     for m in range(1,13):
-        generate_month_data("/FileStore/otacilio/data", year=2021, month=m)
+        generate_month_data("/FileStore/otacilio/data", num_orders=200, year=2021, month=m)
 
 # COMMAND ----------
 
-display(dbutils.fs.ls("/FileStore/otacilio/data/client/2021-01"))
+df_orders = spark.read.format("csv").options(header=True).load("/FileStore/otacilio/data/orders/")
+df_orders.display()
+print(df_orders.count())
+
+# COMMAND ----------
+
+display(dbutils.fs.ls("/FileStore/otacilio/data/client/year_month=2021-01"))
+
+# COMMAND ----------
+
+schema = spark.read.format("json").load("/FileStore/otacilio/data/client/year_month=2021-01/client-0e22be7f-8225-46e0-bbd8-8a045a131912.json").schema
+df_client = spark.read.format("json").schema(schema).load("/FileStore/otacilio/data/client")
+df_client.display()
+print(df_client.count())
+
+# COMMAND ----------
+
+df_join = df_orders.join(df_client.drop("year_month"), 'client_id')
+df_join.display()
+print(df_join.count())
+
+# COMMAND ----------
+
+import pyspark.sql.functions as F
+
+(
+    df_join
+    .groupBy("client_country_code")
+    .agg(F.sum("order_total").alias("country_total"))
+).display()
