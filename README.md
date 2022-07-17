@@ -8,4 +8,4 @@ This repository contains files from a generic Data project on Azure
 
 ## Data Architecture
 
-![Data architecture](.attachments/data-architecture.drawio.png)
+![Data architecture](.attachments/data-architecture.png)
