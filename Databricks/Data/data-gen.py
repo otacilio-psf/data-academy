@@ -71,11 +71,15 @@ dbutils.fs.rm("/FileStore/otacilio/data", True)
 
 # COMMAND ----------
 
-# Change for a temp path locally on the driver and after move to lake /temp/data
+
 for i in range(10):
     print(i)
     for m in range(1,13):
-        generate_month_data("/dbfs/FileStore/otacilio/data", num_orders=200, year=2021, month=m)
+        generate_month_data("/temp/data", num_orders=200, year=2021, month=m)
+
+# COMMAND ----------
+
+dbutils.fs.mv("file:/temp/data", "/FileStore/otacilio/data")
 
 # COMMAND ----------
 
