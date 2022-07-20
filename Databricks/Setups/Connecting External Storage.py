@@ -15,10 +15,22 @@
 
 # COMMAND ----------
 
+# MAGIC %md ## Create kv scope
+# MAGIC 
+# MAGIC - Create kv-databricks scope
+# MAGIC - Add sp-id
+# MAGIC - Add sp-secret
+
+# COMMAND ----------
+
+dbutils.secrets.listScopes()
+
+# COMMAND ----------
+
 container_name = ""
 storage_account_name = ""
-sp_client_id = ""
-sp_client_secret = dbutils.secrets.get(scope="<scope-name>",key="<service-credential-key-name>")
+sp_client_id = dbutils.secrets.get(scope="kv-databricks", key="sp-id")
+sp_client_secret = dbutils.secrets.get(scope="kv-databricks", key="sp-secret")
 tenant_id = ""
 
 # COMMAND ----------
@@ -67,7 +79,13 @@ dbutils.fs.ls(datalake_path)
 
 # COMMAND ----------
 
-datalake_path_kv = dbutils.secrets.get(scope="<scope-name>",key="<service-credential-key-name>")
+# MAGIC %md ## Add path as secret
+# MAGIC 
+# MAGIC - Add lake-path
+
+# COMMAND ----------
+
+datalake_path_kv = dbutils.secrets.get(scope="kv-databricks",key="lake-path")
 
 # COMMAND ----------
 
@@ -88,7 +106,7 @@ fs.azure.account.oauth2.client.endpoint.{storage_account_name}.dfs.core.windows.
 
 # COMMAND ----------
 
-### RESTART CLUSTER
+### ADD CONFIG AND RESTART CLUSTER
 
 # COMMAND ----------
 
