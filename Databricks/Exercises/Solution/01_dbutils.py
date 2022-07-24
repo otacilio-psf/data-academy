@@ -93,3 +93,23 @@ dbutils.notebook.run('./01_calculator',  2000, {"operation":"+", "num1": 20, "nu
 
 # Call 01_calculator for multiplication (*)
 dbutils.notebook.run('./01_calculator',  2000, {"operation":"*", "num1": 20, "num2": 10})
+
+# COMMAND ----------
+
+print(operation)
+
+# COMMAND ----------
+
+# MAGIC %md ## import notebook
+
+# COMMAND ----------
+
+# MAGIC %run ./01_import
+
+# COMMAND ----------
+
+print(datalake_path)
+
+# COMMAND ----------
+
+print(multi(3,2))
