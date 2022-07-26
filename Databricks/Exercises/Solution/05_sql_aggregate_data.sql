@@ -61,7 +61,7 @@ SELECT
   COUNT(1) AS num_titles_year,
   AVG(runtimeMinutes) AS avg_runtime
 FROM imdb.title_basics
-WHERE titleType = 'movie' AND startYear > 2000
+WHERE titleType = 'movie' AND startYear <= 2000
 GROUP BY startYear
 ORDER BY startYear
 
@@ -76,7 +76,7 @@ SELECT
   COUNT(1) AS num_titles_year,
   AVG(runtimeMinutes) AS avg_runtime
 FROM imdb.title_basics
-WHERE titleType = 'movie' AND startYear > 2000
+WHERE titleType = 'movie' AND startYear <= 2000
 GROUP BY startYear
 HAVING avg_runtime >= 90
 ORDER BY startYear
