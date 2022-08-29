@@ -141,6 +141,10 @@ print(word[:4] + word[4:])
 
 # COMMAND ----------
 
+print(list())
+
+# COMMAND ----------
+
 numbers_list = [1, 4, 9, 16, 25]
 print(numbers_list)
 
@@ -232,3 +236,159 @@ students_2 = students.copy()
 students_2.append('Inês')
 print(students)
 print(students_2)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Lists + Strings
+
+# COMMAND ----------
+
+shopping_item = 'Pasta;Quinoa;Rice;Sandwich Bread;Tortillas'
+print(shopping_item)
+
+# COMMAND ----------
+
+shopping_item_list = shopping_item.split(";")
+print(shopping_item_list)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC # Tuples
+
+# COMMAND ----------
+
+print(tuple())
+
+# COMMAND ----------
+
+students_tuple = ('Otacilo', 'André', 'Maria')
+
+# COMMAND ----------
+
+students_tuple.append('Inês')
+
+# COMMAND ----------
+
+students_tuple = students_tuple + ("Inês",)
+print(students_tuple)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC # Dictionaries
+
+# COMMAND ----------
+
+print(dict())
+
+# COMMAND ----------
+
+tutor_infos = {
+    "name": "Otacilio",
+    "age": 30,
+    "programming_languages": ["sql", "python", "spark"]
+}
+
+print(tutor_infos)
+
+# COMMAND ----------
+
+#we can't slice dict
+tutor_infos[0]
+
+# COMMAND ----------
+
+print(f'Tutor name is: {tutor_infos["name"]}')
+print(f'Tutor age: {tutor_infos["age"]}')
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Changing Dictionaries
+
+# COMMAND ----------
+
+print(tutor_infos)
+
+# COMMAND ----------
+
+tutor_infos["age"] = 31
+print(tutor_infos)
+
+# COMMAND ----------
+
+tutor_infos["surname"] = "Filho"
+print(tutor_infos)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Methods
+
+# COMMAND ----------
+
+print(tutor_infos.keys())
+
+# COMMAND ----------
+
+print(tutor_infos.values())
+
+# COMMAND ----------
+
+print(tutor_infos.items())
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Copy Dictionary
+# MAGIC To copy a dict we need to use the method copy like in list
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC # Sets
+
+# COMMAND ----------
+
+print(set())
+
+# COMMAND ----------
+
+basket = {'apple', 'orange', 'apple', 'pear', 'orange', 'banana'}
+print(basket)
+
+# COMMAND ----------
+
+basket_list = ['apple', 'orange', 'apple', 'pear', 'orange', 'banana']
+print(basket_list)
+
+# COMMAND ----------
+
+basket_set = set(basket_list)
+print(basket_set)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC # if - WIP
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC # for - WIP
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC # while - WIP
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC # Functions - WIP
+
+# COMMAND ----------
+
+
