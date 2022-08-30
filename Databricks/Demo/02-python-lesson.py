@@ -449,6 +449,22 @@ while True:
 
 # COMMAND ----------
 
+def print_hello():
+    print("Hello world")
+    
+print_hello()
+
+# COMMAND ----------
+
+def square_number(num):
+    return num ** 2
+
+print(square_number(2))
+print(square_number(3))
+print(square_number(4))
+
+# COMMAND ----------
+
 ## Clean the name of the columns by change any of the bad characters to underscore
 
 column_names_table_1 = ["worker%id", "worker#number"]
@@ -466,5 +482,8 @@ def clean_column_name(name_list):
 
 # COMMAND ----------
 
-print(clean_column_name(column_names_table_1))
-print(clean_column_name(column_names_table_2))
+table_1_column_name_cleaned = clean_column_name(column_names_table_1)
+table_2_column_name_cleaned = clean_column_name(column_names_table_2)
+
+print(table_1_column_name_cleaned)
+print(table_2_column_name_cleaned)
