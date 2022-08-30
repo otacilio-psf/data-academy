@@ -372,23 +372,99 @@ print(basket_set)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC # if - WIP
+# MAGIC # if
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC # for - WIP
+# MAGIC ## Boolean
+
+# COMMAND ----------
+
+my_boolean = True
+print(my_boolean)
+
+# COMMAND ----------
+
+my_boolean = 2 == 1
+print(my_boolean)
+
+# COMMAND ----------
+
+print(my_boolean == True)
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC # while - WIP
+# MAGIC ## sintax
+
+# COMMAND ----------
+
+my_age = 30
+if my_age >= 18:
+    print("Legal age")
+else:
+    print("Under legal age")
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC # Functions - WIP
+# MAGIC # for
 
 # COMMAND ----------
 
+basket_list = ['apple', 'orange', 'pear', 'banana']
 
+for i in basket_list:
+    print(i)
+
+# COMMAND ----------
+
+for i in range(10):
+    print(i)
+
+# COMMAND ----------
+
+for i in range(1,10):
+    print(i*'#')
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC # while
+
+# COMMAND ----------
+
+i = 1
+while True:
+    print(i*'#')
+    i = i + 1
+    if i == 10:
+        break
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC # Functions
+
+# COMMAND ----------
+
+## Clean the name of the columns by change any of the bad characters to underscore
+
+column_names_table_1 = ["worker%id", "worker#number"]
+column_names_table_2 = ["sales*qtd", "sales|price", "sales_total"]
+
+def clean_column_name(name_list):
+    bad_char = ['#', "|", "*", "%"]
+    
+    for i in range(len(name_list)):
+        for b_char in bad_char:
+            if b_char in name_list[i]:
+                name_list[i] = name_list[i].replace(b_char, "_")
+    
+    return name_list
+
+# COMMAND ----------
+
+print(clean_column_name(column_names_table_1))
+print(clean_column_name(column_names_table_2))
