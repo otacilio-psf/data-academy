@@ -10,7 +10,9 @@ variable "SP_ACADEMY_OBJ_ID" {}
 # tfvars file
 variable "project_name" {}
 variable "project_name_ss" {}
-variable "location" {}
+variable "location" {
+  default = "West Europe"
+}
 
 data "azurerm_client_config" "current" {}
 
