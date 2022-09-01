@@ -1,4 +1,4 @@
-resource "azurerm_key_vault" "akv" {
+resource "azurerm_key_vault" "project_akv" {
   name                       = "kv-${var.project_name}-01"
   location                   = azurerm_resource_group.project.location
   resource_group_name        = azurerm_resource_group.project.name
@@ -11,8 +11,15 @@ resource "azurerm_key_vault" "akv" {
     object_id = data.azurerm_client_config.current.object_id
 
     key_permissions = [
-      "Create",
       "Get",
+      "List",
+      "Update",
+      "Create",
+      "Import",
+      "Delete",
+      "Recover",
+      "Backup",
+      "Restore",
     ]
 
     secret_permissions = [
@@ -21,7 +28,8 @@ resource "azurerm_key_vault" "akv" {
       "List",
       "Delete",
       "Purge",
-      "Recover"
+      "Recover",
+      "Restore",
     ]
   }
 }
@@ -29,18 +37,18 @@ resource "azurerm_key_vault" "akv" {
 resource "azurerm_key_vault_secret" "datalake_access_sp_id" {
   name         = "sp-academy-id"
   value        = var.SP_ACADEMY_ID
-  key_vault_id = azurerm_key_vault.akv.id
+  key_vault_id = azurerm_key_vault.project_akv.id
 }
 
 
 resource "azurerm_key_vault_secret" "datalake_access_sp_secret" {
   name         = "sp-academy-secret"
   value        = var.SP_ACADEMY_SECRET
-  key_vault_id = azurerm_key_vault.akv.id
+  key_vault_id = azurerm_key_vault.project_akv.id
 }
 
 resource "azurerm_key_vault_secret" "datalake_access_sp_tenant" {
   name         = "sp-academy-tenant"
   value        = var.TENANT_ID
-  key_vault_id = azurerm_key_vault.akv.id
+  key_vault_id = azurerm_key_vault.project_akv.id
 }
