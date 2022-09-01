@@ -11,6 +11,7 @@ resource "azurerm_storage_account" "stg" {
 resource "azurerm_storage_data_lake_gen2_filesystem" "datalake" {
   name               = "datalake"
   storage_account_id = azurerm_storage_account.stg.id
+
   ace {
     scope = "access"
     type = "user"
@@ -22,6 +23,15 @@ resource "azurerm_storage_data_lake_gen2_filesystem" "datalake" {
     scope = "default"
     type = "user"
     id = var.SP_ACADEMY_OBJ_ID
+    permissions  = "rwx"
+  }
+
+  ace {
+    type = "other"
+    permissions  = "---"
+  }
+  ace {
+    type = "mask"
     permissions  = "rwx"
   }
 }
