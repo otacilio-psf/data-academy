@@ -26,7 +26,7 @@ export TF_VAR_SP_ACADEMY_SECRET=$(echo $SP_ACADEMY_INFO | jq -r ".password")
 export TF_VAR_SP_ACADEMY_OBJ_ID=$(az ad sp show --id $TF_VAR_SP_ACADEMY_ID | jq -r ".objectId")
 ```
 
-### Save .env SP some informations
+### Create .env
 ```
 echo export TF_VAR_SUBSCRIPTION_ID=$TF_VAR_SUBSCRIPTION_ID > .env
 echo export TF_VAR_TENANT_ID=$TF_VAR_TENANT_ID >> .env
@@ -37,7 +37,7 @@ echo export TF_VAR_SP_ACADEMY_SECRET=$TF_VAR_SP_ACADEMY_SECRET >> .env
 echo export TF_VAR_SP_ACADEMY_OBJ_ID=$TF_VAR_SP_ACADEMY_OBJ_ID >> .env
 ```
 
-### Reload .env with SP some informations
+### Reload .env
 ```
 source .env 
 ```
