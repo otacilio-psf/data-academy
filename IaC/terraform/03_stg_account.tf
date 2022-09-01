@@ -26,12 +26,4 @@ resource "azurerm_storage_data_lake_gen2_filesystem" "datalake" {
     permissions  = "rwx"
   }
 
-  ace {
-    type = "other"
-    permissions  = "---"
-  }
-  ace {
-    type = "mask"
-    permissions  = "rwx"
-  }
 }
