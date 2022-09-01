@@ -1,3 +1,4 @@
+# TF_VAR_ environment variables
 variable "SUBSCRIPTION_ID" {}
 variable "TENANT_ID" {}
 variable "SP_TERRAFORM_ID" {}
@@ -5,6 +6,8 @@ variable "SP_TERRAFORM_SECRET" {}
 variable "SP_ACADEMY_ID" {}
 variable "SP_ACADEMY_SECRET" {}
 variable "SP_ACADEMY_OBJ_ID" {}
+
+# tfvars file
 variable "project_name" {}
 variable "project_name_ss" {}
 variable "location" {}
