@@ -29,9 +29,9 @@ dbutils.secrets.listScopes()
 
 container_name = ""
 storage_account_name = ""
-sp_client_id = dbutils.secrets.get(scope="kv-databricks", key="sp-id")
-sp_client_secret = dbutils.secrets.get(scope="kv-databricks", key="sp-secret")
-tenant_id = ""
+sp_client_id = dbutils.secrets.get(scope="kv-databricks", key="sp-datalake-app-id")
+sp_client_secret = dbutils.secrets.get(scope="kv-databricks", key="sp-datalake-secret")
+tenant_id = dbutils.secrets.get(scope="kv-databricks", key="sp-datalake-tenant")
 
 # COMMAND ----------
 
@@ -70,7 +70,7 @@ spark.conf.set(f"fs.azure.account.oauth2.client.id.{storage_account_name}.dfs.co
 spark.conf.set(f"fs.azure.account.oauth2.client.secret.{storage_account_name}.dfs.core.windows.net", sp_client_secret)
 spark.conf.set(f"fs.azure.account.oauth2.client.endpoint.{storage_account_name}.dfs.core.windows.net", f"https://login.microsoftonline.com/{tenant_id}/oauth2/token")
 
-datalake_path = f"abfss://{container_name}@{storage_account_name}.dfs.core.windows.net/"
+datalake_path = f"abfss://{container_name}@{storage_account_name}.dfs.core.windows.net"
 print(datalake_path)
 
 # COMMAND ----------
@@ -85,7 +85,7 @@ dbutils.fs.ls(datalake_path)
 
 # COMMAND ----------
 
-datalake_path_kv = dbutils.secrets.get(scope="kv-databricks",key="lake-path")
+datalake_path_kv = dbutils.secrets.get(scope="kv-databricks",key="datalake-path")
 
 # COMMAND ----------
 
@@ -98,11 +98,15 @@ dbutils.fs.ls(datalake_path_kv)
 
 # COMMAND ----------
 
+print(storage_account_name)
+
+# COMMAND ----------
+
 fs.azure.account.auth.type.{storage_account_name}.dfs.core.windows.net OAuth
 fs.azure.account.oauth.provider.type.{storage_account_name}.dfs.core.windows.net org.apache.hadoop.fs.azurebfs.oauth2.ClientCredsTokenProvider
-fs.azure.account.oauth2.client.id.{storage_account_name}.dfs.core.windows.net sp_client_id
-fs.azure.account.oauth2.client.secret.{storage_account_name}.dfs.core.windows.net {{secrets/<scope-name>/<secret-name>}}
-fs.azure.account.oauth2.client.endpoint.{storage_account_name}.dfs.core.windows.net https://login.microsoftonline.com/{tenant_id}/oauth2/token
+fs.azure.account.oauth2.client.id.{storage_account_name}.dfs.core.windows.net {{secrets/kv-databricks/sp-datalake-app-id}}
+fs.azure.account.oauth2.client.secret.{storage_account_name}.dfs.core.windows.net {{secrets/kv-databricks/sp-datalake-secret}}
+fs.azure.account.oauth2.client.endpoint.{storage_account_name}.dfs.core.windows.net https://login.microsoftonline.com/TENANT_ID/oauth2/token
 
 # COMMAND ----------
 
@@ -110,7 +114,5 @@ fs.azure.account.oauth2.client.endpoint.{storage_account_name}.dfs.core.windows.
 
 # COMMAND ----------
 
-container_name = ""
-storage_account_name = ""
-datalake_path = f"abfss://{container_name}@{storage_account_name}.dfs.core.windows.net/"
-dbutils.fs.ls(datalake_path)
+datalake_path_kv = dbutils.secrets.get(scope="kv-databricks",key="datalake-path")
+dbutils.fs.ls(datalake_path_kv)
