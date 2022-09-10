@@ -3,14 +3,8 @@ variable "SUBSCRIPTION_ID" {}
 variable "TENANT_ID" {}
 variable "SP_TERRAFORM_ID" {}
 variable "SP_TERRAFORM_SECRET" {}
-variable "SP_ACADEMY_ID" {}
-variable "SP_ACADEMY_SECRET" {}
-variable "SP_ACADEMY_OBJ_ID" {}
-
-# tfvars file
-variable "project_name" {}
-variable "project_name_ss" {}
-variable "location" {
+variable "PROJECT_NAME" {}
+variable "LOCATION" {
   default = "West Europe"
 }
 
@@ -21,6 +15,10 @@ terraform {
     azurerm = {
       source  = "hashicorp/azurerm"
       version = "=3.0.0"
+    }
+    azuread = {
+      source  = "hashicorp/azuread"
+      version = "~> 2.15.0"
     }
   }
 }
@@ -39,6 +37,11 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "project" {
-  name     = "rg-${var.project_name}"
-  location = var.location
+  name     = "rg-${var.PROJECT_NAME}-01"
+  location = var.LOCATION
+}
+
+output "rg_name" {
+  value       = azurerm_resource_group.project.name
+  description = "RG name"
 }
