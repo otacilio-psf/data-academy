@@ -30,7 +30,7 @@ resource "azurerm_key_vault_secret" "datalake_access_sp_secret" {
 
 resource "azurerm_key_vault_secret" "datalake_access_sp_tenant" {
   name         = "sp-datalake-tenant"
-  value        = var.TENANT_ID
+  value        = data.azurerm_client_config.current.tenant_id
   key_vault_id = azurerm_key_vault.akv.id
 
   depends_on = [

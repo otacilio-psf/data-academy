@@ -1,6 +1,4 @@
-provider "azuread" {
-  tenant_id = var.TENANT_ID
-}
+provider "azuread" {}
 
 data "azuread_client_config" "current" {}
 
