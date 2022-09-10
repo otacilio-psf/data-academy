@@ -37,3 +37,15 @@ resource "azurerm_key_vault_secret" "datalake_access_sp_tenant" {
     azurerm_key_vault_access_policy.deployer
   ]
 }
+
+resource "azurerm_key_vault_secret" "datalake_path" {
+  name         = "datalake-path"
+  value        = "abfss://${azurerm_storage_data_lake_gen2_filesystem.datalake.name}@${azurerm_storage_account.stga_datalake.name}.dfs.core.windows.net"
+  key_vault_id = azurerm_key_vault.akv.id
+
+  depends_on = [
+    azurerm_key_vault_access_policy.deployer
+  ]
+}
+
+
