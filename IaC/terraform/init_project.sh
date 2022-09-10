@@ -14,7 +14,7 @@ export TF_VAR_SP_TERRAFORM_SECRET=$(echo $SP_TERRAFORM_INFO | jq -r ".password")
 echo Create .env
 
 echo export TF_VAR_PROJECT_NAME=$TF_VAR_PROJECT_NAME > .env
-echo export TF_VAR_LOCATION="${TF_VAR_LOCATION}" >> .env
+echo export TF_VAR_LOCATION='"'${TF_VAR_LOCATION}'"' >> .env
 echo export TF_VAR_SUBSCRIPTION_ID=$TF_VAR_SUBSCRIPTION_ID >> .env
 echo export TF_VAR_TENANT_ID=$TF_VAR_TENANT_ID >> .env
 echo export TF_VAR_SP_TERRAFORM_ID=$TF_VAR_SP_TERRAFORM_ID >> .env
