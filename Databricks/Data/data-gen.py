@@ -1,5 +1,5 @@
 # Databricks notebook source
-# MAGIC %pip install Faker
+# MAGIC %pip install faker azure-storage-file-datalake
 
 # COMMAND ----------
 
@@ -75,21 +75,76 @@ dbutils.fs.rm("file:/temp/data",True)
 for y in [2018,2019,2020,2021]:
     for m in range(1,13):
         for i in range(10):
-            generate_month_data("/temp/data", num_orders=1000, year=y, month=m)
+            generate_month_data("/temp/data", num_orders=randint(700,1100), year=y, month=m)
 
 # COMMAND ----------
 
-dbutils.fs.ls("/FileStore/delta-data-academy/data/orders")
+from azure.storage.filedatalake import DataLakeServiceClient
+from os import listdir, makedirs
+
+class Datalake_handler():
+    
+    def __init__(self, conn_str, container):
+        self._adls = DataLakeServiceClient.from_connection_string(conn_str)
+        self._fs = self._adls.get_file_system_client(file_system=container)
+        
+        self._container = container
+
+    def create_dir(self, dir_path):
+        try:
+            self._fs.create_directory(dir_path)
+        except Exception as e:
+            print(e)
+   
+    def upload_dir(self, local_dir_path, remote_dir_path, dir_scope=False):
+        for root, _, files in os.walk(local_dir_path):
+            for name in files:
+                local_file_path = os.path.join(root, name)
+                file_name = local_file_path.replace(local_dir_path + os.sep,'')
+                self.upload_file(local_file_path,
+                                 f'{remote_dir_path}/{file_name}',
+                                 dir_scope)
+                
+    def upload_file(self, local_file_path, remote_file_path, dir_scope=False):
+        if dir_scope: scope = self._dir
+        else: scope = self._fs
+        try: 
+            file_client = scope.get_file_client(remote_file_path)
+            with open(local_file_path,'r') as local_file:
+                file_contents = local_file.read()
+                file_client.upload_data(file_contents, overwrite=True)
+        except Exception as e:
+            print(e)
 
 # COMMAND ----------
 
-dbutils.fs.cp("file:/temp/data", "/FileStore/delta-data-academy/data", True)
+conn_str = dbutils.secrets.get(scope="kv-databricks", key="datalake-conn-str")
+container = 'datalake'
+adlfs = Datalake_handler(conn_str, container)
+
+adlfs.create_dir('raw')
 
 # COMMAND ----------
 
-df_orders = spark.read.format("csv").options(header=True).load("/FileStore/delta-data-academy/data/orders/")
+adlfs.upload_dir("/temp/data", 'raw')
+
+# COMMAND ----------
+
+dbutils.fs.ls("/mnt/academy_datalake/raw/")
+
+# COMMAND ----------
+
+df_orders = spark.read.format("csv").options(header=True).load("/mnt/academy_datalake/raw/orders/")
 df_orders.display()
 print(df_orders.count())
+
+# COMMAND ----------
+
+dbutils.fs.ls("/mnt/academy_datalake/raw/client/")
+
+# COMMAND ----------
+
+########## test
 
 # COMMAND ----------
 
@@ -113,7 +168,3 @@ import pyspark.sql.functions as F
     .groupBy("client_country_code")
     .agg(F.sum("order_total").alias("country_total"))
 ).display()
-
-# COMMAND ----------
-
-
