@@ -67,29 +67,29 @@ def generate_month_data(path, num_orders=100, year=None, month=None):
 
 # COMMAND ----------
 
-dbutils.fs.rm("/FileStore/otacilio/data", True)
+dbutils.fs.rm("/FileStore/delta-data-academy/data", True)
+dbutils.fs.rm("file:/temp/data",True)
 
 # COMMAND ----------
 
-
-for i in range(10):
-    print(i)
+for y in [2018,2019,2020,2021]:
     for m in range(1,13):
-        generate_month_data("/temp/data", num_orders=200, year=2021, month=m)
+        for i in range(10):
+            generate_month_data("/temp/data", num_orders=1000, year=y, month=m)
 
 # COMMAND ----------
 
-dbutils.fs.mv("file:/temp/data", "/FileStore/otacilio/data")
+dbutils.fs.ls("/FileStore/delta-data-academy/data/orders")
 
 # COMMAND ----------
 
-df_orders = spark.read.format("csv").options(header=True).load("/FileStore/otacilio/data/orders/")
+dbutils.fs.cp("file:/temp/data", "/FileStore/delta-data-academy/data", True)
+
+# COMMAND ----------
+
+df_orders = spark.read.format("csv").options(header=True).load("/FileStore/delta-data-academy/data/orders/")
 df_orders.display()
 print(df_orders.count())
-
-# COMMAND ----------
-
-display(dbutils.fs.ls("/FileStore/otacilio/data/client/year_month=2021-01"))
 
 # COMMAND ----------
 
@@ -113,3 +113,7 @@ import pyspark.sql.functions as F
     .groupBy("client_country_code")
     .agg(F.sum("order_total").alias("country_total"))
 ).display()
+
+# COMMAND ----------
+
+
