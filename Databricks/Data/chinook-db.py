@@ -45,6 +45,8 @@ for t in tables:
 
 # COMMAND ----------
 
+spark.sql(f"CREATE DATABASE IF NOT EXISTS bronze_chinook")
+
 def bronze_ingestion(tab):
     tab = tab.lower()
     
@@ -53,15 +55,13 @@ def bronze_ingestion(tab):
         .option("header", "true")
         .load(f"file:/content/raw/{tab}.csv")
         .write.mode("overwrite").format("delta")
-        .save(f"/mnt/datalake/bronze/{tab}")
+        .save(f"/mnt/datalake/bronze/chinook/{tab}")
     )
     
     spark.sql(f"DROP TABLE IF EXISTS bronze_chinook.{tab}")
-    spark.sql(f"CREATE TABLE bronze_chinook.{tab} LOCATION '/mnt/datalake/bronze/{tab}'")
+    spark.sql(f"CREATE TABLE bronze_chinook.{tab} USING DELTA LOCATION '/mnt/datalake/bronze/chinook/{tab}'")
     
     print(f"INFO: bronze_chinook.{tab} created")
-
-# COMMAND ----------
 
 for t in tables:
     bronze_ingestion(t)
