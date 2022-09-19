@@ -66,7 +66,7 @@ spark.sql("CREATE DATABASE IF NOT EXISTS silver_imdb")
 # MAGIC 
 # MAGIC - title_basics:
 # MAGIC   - columns names should be all in [snake_case](https://en.wikipedia.org/wiki/Snake_case)
-# MAGIC   - column is_adult need to be a int, null values should be 1 (better 1 then 0)
+# MAGIC   - column is_adult need to be a int, null values or diff them 0 or 1 should be 1 (better 1 then 0)
 # MAGIC   - columns start_year and end_year need to be integer
 # MAGIC   - column runtime_minutes need to be integer
 # MAGIC   - change '\N' from genres to 'Unknown'
@@ -91,7 +91,7 @@ spark.sql("CREATE DATABASE IF NOT EXISTS silver_imdb")
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC SELECT min(averageRating), max(averageRating)
+# MAGIC SELECT *
 # MAGIC FROM bronze_imdb.title_ratings 
 
 # COMMAND ----------
@@ -161,7 +161,7 @@ df_title_basics.printSchema()
 df_title_basics = (
     df_title_basics
     .withColumn("is_adult", col("is_adult").cast("integer"))
-    .withColumn("is_adult", when(col("is_adult").isNull(),lit(1)).otherwise(col("is_adult")))
+    .withColumn("is_adult", when(col("is_adult")==0,col("is_adult")).otherwise(lit(1)))
     .withColumn("start_year", col("start_year").cast("integer"))
     .withColumn("end_year", col("end_year").cast("integer"))
     .withColumn("runtime_minutes", col("runtime_minutes").cast("integer"))
@@ -278,7 +278,7 @@ spark.sql("CREATE DATABASE IF NOT EXISTS gold_imdb")
 # MAGIC %md
 # MAGIC ### Business Rules
 # MAGIC 
-# MAGIC Gold layer need to be [Star Schema](https://learn.microsoft.com/en-us/power-bi/guidance/star-schema)
+# MAGIC In our case gold layer need to be [Star Schema](https://learn.microsoft.com/en-us/power-bi/guidance/star-schema) to improve performance on Power BI
 # MAGIC 
 # MAGIC ![IMDb Star Schema](https://raw.githubusercontent.com/otacilio-psf/data-academy/main/.attachments/imdb-star-model.png)
 
@@ -303,12 +303,8 @@ spark.sql("CREATE DATABASE IF NOT EXISTS gold_imdb")
 # MAGIC - [filter](https://spark.apache.org/docs/3.2.1/api/python/reference/api/pyspark.sql.DataFrame.filter.html)
 # MAGIC - [limit](https://spark.apache.org/docs/3.2.1/api/python/reference/api/pyspark.sql.DataFrame.limit.html)
 # MAGIC - display: specific from Databricks workspace | spark core alternatives limit(1000).[toPandas()](https://spark.apache.org/docs/3.2.1/api/python/reference/api/pyspark.sql.DataFrame.toPandas.html).head()
-# MAGIC 
-# MAGIC - []()
-# MAGIC - []()
-# MAGIC - []()
-# MAGIC - []()
-
-# COMMAND ----------
-
-
+# MAGIC - [join](https://spark.apache.org/docs/3.2.1/api/python/reference/api/pyspark.sql.DataFrame.join.html)
+# MAGIC - [distinct](https://spark.apache.org/docs/3.2.1/api/python/reference/api/pyspark.sql.DataFrame.distinct.html)
+# MAGIC - [monotonically_increasing_id](https://spark.apache.org/docs/3.2.1/api/python/reference/api/pyspark.sql.functions.monotonically_increasing_id.html)
+# MAGIC - [Window](https://spark.apache.org/docs/3.2.1/api/python/reference/api/pyspark.sql.Window.html)
+# MAGIC - [row_number](https://spark.apache.org/docs/3.2.1/api/python/reference/api/pyspark.sql.functions.row_number.html)
