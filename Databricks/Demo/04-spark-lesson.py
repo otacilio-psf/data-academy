@@ -145,12 +145,12 @@ display(dbutils.fs.ls("/mnt/datalake/sample/json"))
 
 # COMMAND ----------
 
-schema = (
+df = (
     spark.read.format("json")
     .option("inferSchema", True)
     .load("/mnt/datalake/sample/json/profile_000.json")
-    .schema
 )
+schema = df.schema
 print(schema)
 
 # COMMAND ----------
@@ -161,6 +161,10 @@ df = (
     .load("/mnt/datalake/sample/json")
 )
 df.display()
+
+# COMMAND ----------
+
+dbutils.fs.head("dbfs:/mnt/datalake/sample/json/profile_016.json")
 
 # COMMAND ----------
 
@@ -215,6 +219,7 @@ df.display()
 # MAGIC # Writing Data
 # MAGIC 
 # MAGIC To write our DataFrame on the disk we will use the sintax
+# MAGIC 
 # MAGIC df.write.mode(mode).format(format).option(option).save(/datalake/path)
 # MAGIC 
 # MAGIC mode:
@@ -273,7 +278,13 @@ spark.read.format('csv').option("header", True).load("/FileStore/otacilio/spark-
 
 # COMMAND ----------
 
-df.coalesce(1).write.mode("overwrite").format("csv").option("header", True).save("/FileStore/otacilio/spark-lesson/csv_2")
+(
+    df.coalesce(1).write
+    .mode("overwrite")
+    .format("csv")
+    .option("header", True)
+    .save("/FileStore/otacilio/spark-lesson/csv_2")
+)
 
 # COMMAND ----------
 
@@ -289,10 +300,14 @@ spark.read.format('csv').option("header", True).load("/FileStore/otacilio/spark-
 # MAGIC ## Parquet
 # MAGIC 
 # MAGIC Parquet keeps data and metadata.
-# MAGIC 
-# MAGIC It's not specific from parquet but we can partition by a column when we are writing (!= data partition os spark memory)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### Folder partition:
+# MAGIC It's not specific from parquet but we can [partition by](https://spark.apache.org/docs/3.2.1/api/python/reference/api/pyspark.sql.DataFrameWriter.partitionBy.html#pyspark.sql.DataFrameWriter.partitionBy) a column when we are writing (!= data partition on spark memory)
 # MAGIC   - Partition helps with data skipping, i.e., when the partition is used on filters Spark will read only the necessay ones
-# MAGIC   - <img src="https://cdn-icons-png.flaticon.com/512/497/497738.png" alt="warn" width="25"/> A bad partition strategy can be worst them partiton, Delta Lake have optimizations for data skipping
+# MAGIC   - <img src="https://cdn-icons-png.flaticon.com/512/497/497738.png" alt="warn" width="25"/> A bad partition strategy can be worst them no partiton, Delta Lake have optimizations for data skipping
 # MAGIC   
 
 # COMMAND ----------
@@ -301,7 +316,7 @@ df.write.mode("overwrite").format("parquet").save("/FileStore/otacilio/spark-les
 
 # COMMAND ----------
 
-dbutils.fs.ls("/FileStore/otacilio/spark-lesson/parquet_1")
+display(dbutils.fs.ls("/FileStore/otacilio/spark-lesson/parquet_1"))
 
 # COMMAND ----------
 
@@ -313,7 +328,7 @@ df.write.mode("overwrite").format("parquet").partitionBy('sex').save("/FileStore
 
 # COMMAND ----------
 
-dbutils.fs.ls("/FileStore/otacilio/spark-lesson/parquet_2/")
+display(dbutils.fs.ls("/FileStore/otacilio/spark-lesson/parquet_2/"))
 
 # COMMAND ----------
 
@@ -484,6 +499,11 @@ df_result.select("sex", "mail_domain").display()
 
 condition = (col("mail_domain")=="hotmail.com")&(col("sex")=="F")
 df_result = df.filter(condition)
+df_result.select("sex", "mail_domain").display()
+
+# COMMAND ----------
+
+df_result = df.filter("mail_domain = 'hotmail.com' OR sex = 'F'")
 df_result.select("sex", "mail_domain").display()
 
 # COMMAND ----------
