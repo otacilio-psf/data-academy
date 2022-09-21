@@ -613,32 +613,20 @@ df_agg.display()
 # MAGIC %md
 # MAGIC # Joins
 # MAGIC 
+# MAGIC ## [Joins types:](https://spark.apache.org/docs/3.1.2/sql-ref-syntax-qry-select-join.html#join-types)
 # MAGIC 
-# MAGIC [Joins types](https://spark.apache.org/docs/3.1.2/sql-ref-syntax-qry-select-join.html#join-types)
-# MAGIC 
-# MAGIC Must be one of:
-# MAGIC  - inner *
-# MAGIC  - cross
-# MAGIC  - outer
-# MAGIC  - full
-# MAGIC  - fullouter
-# MAGIC  - full_outer
-# MAGIC  - left *
-# MAGIC  - leftouter
-# MAGIC  - left_outer
-# MAGIC  - right *
-# MAGIC  - rightouter
-# MAGIC  - right_outer
-# MAGIC  - [semi](https://spark.apache.org/docs/3.1.2/sql-ref-syntax-qry-select-join.html#semi-join)
-# MAGIC  - leftsemi
-# MAGIC  - left_semi
-# MAGIC  - [anti](https://spark.apache.org/docs/3.1.2/sql-ref-syntax-qry-select-join.html#anti-join)
-# MAGIC  - leftanti
-# MAGIC  - left_anti
-# MAGIC 
-# MAGIC default inner
-# MAGIC 
-# MAGIC \* Most used
+# MAGIC - **inner** (default)
+# MAGIC   - It selects rows that have matching values in both relations.
+# MAGIC - **left** / leftouter / left_outer
+# MAGIC   - Returns all values from the left relation and the matched values from the right relation, or appends NULL if there is no match.
+# MAGIC - **right** / rightouter / right_outer
+# MAGIC   - Returns all values from the right relation and the matched values from the left relation, or appends NULL if there is no match. 
+# MAGIC - **outer** / full / fullouter / full_outer
+# MAGIC   - Returns all values from both relations, appending NULL values on the side that does not have a match.
+# MAGIC - **semi** / leftsemi / left_semi
+# MAGIC   - Returns values from the left side of the relation that has a match with the right, but only brings the left side columns
+# MAGIC - **anti** / leftanti / left_anti
+# MAGIC   - Returns values from the left relation that has no match with the right, but only brings the left side columns
 
 # COMMAND ----------
 
@@ -657,6 +645,23 @@ df_final = (
 )
 
 df_final.display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Join Strategies
+# MAGIC 
+# MAGIC - Broadcast Join (BHJ).
+# MAGIC   - Left DataFrame >>>>>> Right DataFrame (Small right DataFrame)
+# MAGIC - Shuffled Hash Join (SHJ).
+# MAGIC   - Left DataFrame >>> Right DataFrame
+# MAGIC - Sort Merge Join (SMJ)
+# MAGIC   - Default
+# MAGIC   
+# MAGIC   
+# MAGIC `df_big.join(df_very_small.hint("broadcast"), "key")`
+# MAGIC 
+# MAGIC `df_big.join(df_smaller.hint("shuffle_hash"), "key")`
 
 # COMMAND ----------
 
