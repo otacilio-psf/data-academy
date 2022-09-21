@@ -1,48 +1,86 @@
 # Databricks notebook source
-# MAGIC %pip install faker azure-storage-file-datalake
+# MAGIC %pip install faker openpyxl
+
+# COMMAND ----------
+
+from faker import Faker
+
+fake = Faker()
 
 # COMMAND ----------
 
 class ClassSetup():
     
-    def __init__(self):
-        self._user_path = f"sample"
-        dbutils.fs.rm(f"file:/temp/{self._user_path}", True) 
-        dbutils.fs.mkdirs(f"file:/temp/{self._user_path}/json") 
-        dbutils.fs.rm(f"/mnt/academy_datalake/{self._user_path}", True)
+    def __init__(self, path):
+        self._user_path = f"{path}/sample"
+        dbutils.fs.rm(self._user_path, True)
+        dbutils.fs.rm("file:/sample_content", True)
+        dbutils.fs.mkdirs("file:/sample_content")
     
     
     def create_csv(self):
         population = [fake.simple_profile() for _ in range(10000)]
         for i in range(len(population)):
             population[i]['address'] = population[i]['address'].replace("\n"," ")
-        pd.DataFrame(population).to_csv(f"/temp/{self._user_path}/profile_csv.csv", index=False)
+            
+        (
+            spark.createDataFrame(population).coalesce(1)
+            .write.csv(f"{self._user_path}/_temp_profile_csv", header=True)
+        )
+        csv_path = [
+            i.path
+            for i in dbutils.fs.ls(f"/FileStore/temp/test/sample/_temp_profile_csv")
+            if ".csv" in i.path
+        ][0]
+        
+        dbutils.fs.mv(csv_path, f"{self._user_path}/profile_csv.csv")
+        dbutils.fs.rm(f"{self._user_path}/_temp_profile_csv", True)
     
     def create_json(self):
-        for i in range(1000):
-            j = fake.simple_profile()
-            j['address'] = j['address'].replace("\n"," ")
-            with open(f"/temp/{self._user_path}/json/profile_{str(i).zfill(3)}.json", 'w') as f:
-                json.dump(j, f, default=str)
-    
-    def create_xlsm(self):
         population = [fake.simple_profile() for _ in range(10000)]
         for i in range(len(population)):
             population[i]['address'] = population[i]['address'].replace("\n"," ")
-        pd.DataFrame(population).to_excel(f"/temp/{self._user_path}/profile_excel.xls", index=False)
+            
+        (
+            spark.createDataFrame(population).repartition(1000)
+            .write.json(f"{self._user_path}/profile_json")
+        )
+                
+        not_json_path = [
+            i.path
+            for i in dbutils.fs.ls(f"{self._user_path}/profile_json"
+                                  )
+            if ".json" not in i.path
+        ]
+        for njp in not_json_path:
+            dbutils.fs.rm(njp)
+    
+    def create_xlsx(self):
+        population = [fake.simple_profile() for _ in range(10000)]
+        for i in range(len(population)):
+            population[i]['address'] = population[i]['address'].replace("\n"," ")
+            
+        (
+            spark.createDataFrame(population)
+            .to_pandas_on_spark()
+            .to_excel("/sample_content/profile_excel.xlsx", index=False)
+        )
+        dbutils.fs.mv("file:/sample_content/profile_excel.xlsx", f"{self._user_path}/profile_excel.xlsx")
     
     def create_all(self):
         self.create_csv()
         self.create_json()
-        self.create_xlsm()
-        adlfs.create_dir(self._user_path)
-        adlfs.upload_dir(f"/temp/{self._user_path}", self._user_path)
+        self.create_xlsx()
         
 
 # COMMAND ----------
 
-ClassSetup().create_all()
+ClassSetup("/FileStore/temp/test").create_all()
 
 # COMMAND ----------
 
+dbutils.fs.ls("/FileStore/temp/test/sample")
 
+# COMMAND ----------
+
+ClassSetup("/FileStore/spark_lesson/data").create_xls()
