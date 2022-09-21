@@ -135,20 +135,24 @@ df.display()
 df = (
     spark.read.format("json")
     .option("inferSchema", True)
-    .load("/mnt/academy_datalake/sample/json")
+    .load("/mnt/academy_datalake/sample/profile_json")
 )
 df.display()
 
 # COMMAND ----------
 
-display(dbutils.fs.ls("/mnt/datalake/sample/json"))
+display(dbutils.fs.ls("/mnt/datalake/sample/profile_json"))
+
+# COMMAND ----------
+
+dbutils.fs.head("/mnt/datalake/sample/profile_json/profile_000.json")
 
 # COMMAND ----------
 
 df = (
     spark.read.format("json")
     .option("inferSchema", True)
-    .load("/mnt/datalake/sample/json/profile_000.json")
+    .load("/mnt/datalake/sample/profile_json/profile_000.json")
 )
 schema = df.schema
 print(schema)
@@ -158,13 +162,9 @@ print(schema)
 df = (
     spark.read.format("json")
     .schema(schema)
-    .load("/mnt/datalake/sample/json")
+    .load("/mnt/datalake/sample/profile_json")
 )
 df.display()
-
-# COMMAND ----------
-
-dbutils.fs.head("dbfs:/mnt/datalake/sample/json/profile_016.json")
 
 # COMMAND ----------
 
@@ -173,7 +173,7 @@ schema = "username string, name string, sex int, addres string, mail string, bir
 df = (
     spark.read.format("json")
     .schema(schema)
-    .load("/mnt/datalake/sample/json")
+    .load("/mnt/datalake/sample/profile_json")
 )
 df.display()
 
@@ -201,7 +201,7 @@ df.display()
 
 # COMMAND ----------
 
-# MAGIC %pip install xlrd openpyxl 
+# MAGIC %pip install openpyxl 
 
 # COMMAND ----------
 
@@ -209,7 +209,7 @@ import pyspark.pandas as pd
 
 # COMMAND ----------
 
-df = pd.read_excel("/mnt/datalake/sample/profile_excel.xls").to_spark()
+df = pd.read_excel("/mnt/datalake/sample/profile_excel.xlsx").to_spark()
 
 df.display()
 
@@ -581,6 +581,28 @@ df_result.display()
 
 # MAGIC %md
 # MAGIC # Spark SQL
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### Call files in SQL
+# MAGIC 
+# MAGIC ```
+# MAGIC format.`/datalake/path/table`
+# MAGIC ```
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC SELECT *
+# MAGIC FROM csv.`/mnt/datalake/sample/profile_csv.csv`
+
+# COMMAND ----------
+
+spark.sql("""
+SELECT *
+FROM parquet.`/mnt/datalake/sample/profile_parquet.parquet`
+""").display()
 
 # COMMAND ----------
 
