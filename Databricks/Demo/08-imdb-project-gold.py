@@ -293,6 +293,35 @@ store_and_mount(df_fact, "gold_imdb.f_rating")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC ### Results
+
+# COMMAND ----------
+
+spark.sql("SELECT * FROM gold_imdb.d_is_adult").display()
+
+# COMMAND ----------
+
+spark.sql("SELECT * FROM gold_imdb.d_main_genre").display()
+
+# COMMAND ----------
+
+spark.sql("SELECT * FROM gold_imdb.d_num_votes_type").display()
+
+# COMMAND ----------
+
+spark.sql("SELECT * FROM gold_imdb.d_title").display()
+
+# COMMAND ----------
+
+spark.sql("SELECT * FROM gold_imdb.d_title_type").display()
+
+# COMMAND ----------
+
+spark.sql("SELECT * FROM gold_imdb.f_rating").display()
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC # Funtions sumary
 # MAGIC 
 # MAGIC Documentation of all functions used:

@@ -251,6 +251,10 @@ store_and_mount(df_title_ratings, "silver_imdb.title_ratings")
 
 # COMMAND ----------
 
+spark.sql("SELECT * FROM silver_imdb.title_ratings").display()
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC # Funtions sumary
 # MAGIC 

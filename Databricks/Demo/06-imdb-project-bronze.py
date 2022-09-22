@@ -48,7 +48,7 @@ def bronze_ingestion(tab):
         spark.read.format("csv")
         .options(header=True, sep='\t')
         .load(f"file:/content/raw/{tab}.tsv.gz")
-        .withColumn("LOAD_DATETIME", current_timestamp())
+        .withColumn("load_datetime", current_timestamp())
         .write.mode("overwrite").format("delta")
         .save(f"/mnt/datalake/bronze/imdb/{tab_}")
     )
