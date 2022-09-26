@@ -10,10 +10,10 @@ This repository contains files from a generic Data project on Azure
 
 ![Data architecture](.attachments/data-architecture.png)
 
-## Data Model
+## Silver Layer Data Model
 
 ![Data architecture](.attachments/data-model.png)
 
-## Gold Layer Model
+## Gold Layer Data Model
 
 ![Data architecture](.attachments/data-model-star-schema.png)
