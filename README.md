@@ -1,6 +1,6 @@
-# Azure Data Project
+# Data Academy
 
-This repository contains files from a generic Data project on Azure
+This repository contains files for a Data Academy
 
 ## Architecture
 
