@@ -43,13 +43,13 @@ def generate_month_data(path, num_orders=100, year=None, month=None):
     (
         spark.createDataFrame(fake_clients, fake_clients_schema)
         .write.mode("append").format("json")
-        .save(f"{path}/client")
+        .save(f"{path}/clients")
     )
     
     # Clean up fake clients folder
     not_json_path = [
         i.path
-        for i in dbutils.fs.ls(f"{path}/client")
+        for i in dbutils.fs.ls(f"{path}/clients")
         if ".json" not in i.path
     ]
     for njp in not_json_path:
@@ -82,7 +82,7 @@ def generate_month_data(path, num_orders=100, year=None, month=None):
     # Clean up CSV
     not_csv_path = [
         i.path
-        for i in dbutils.fs.ls(f"{path}/client")
+        for i in dbutils.fs.ls(f"{path}/orders")
         if ".csv" not in i.path
     ]
     for ncp in not_csv_path:
@@ -90,43 +90,12 @@ def generate_month_data(path, num_orders=100, year=None, month=None):
 
 # COMMAND ----------
 
-dbutils.fs.rm("/FileStore/delta-data-academy/data", True)
-
-# COMMAND ----------
-
-
+dbutils.fs.rm("/mnt/datalake/raw/clients", True)
+dbutils.fs.rm("/mnt/datalake/raw/orders", True)
 
 # COMMAND ----------
 
 for y in [2018,2019,2020,2021]:
     for m in range(1,13):
         for i in range(10):
-            generate_month_data("/FileStore/delta-data-academy/data", num_orders=randint(700,1100), year=y, month=m)
-
-# COMMAND ----------
-
-df_orders = spark.read.format("csv").options(header=True).load("/FileStore/delta-data-academy/data/orders/")
-df_orders.display()
-print(df_orders.count())
-
-# COMMAND ----------
-
-df_client = spark.read.format("json").load("/FileStore/delta-data-academy/data/client")
-df_client.display()
-print(df_client.count())
-
-# COMMAND ----------
-
-df_join = df_orders.join(df_client, 'client_id')
-df_join.display()
-print(df_join.count())
-
-# COMMAND ----------
-
-import pyspark.sql.functions as F
-
-(
-    df_join
-    .groupBy("client_country_code")
-    .agg(F.sum("order_total").alias("country_total"))
-).display()
+            generate_month_data("/mnt/datalake/raw", num_orders=randint(700,1100), year=y, month=m)
