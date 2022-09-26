@@ -190,7 +190,7 @@ print(df_fact.columns)
 # COMMAND ----------
 
 dimension_key = "title_key"
-column_list = ['primary_title', 'original_title', 'tconst']
+column_list = ['primary_title', 'original_title', 'start_year', 'end_year', 'runtime_minutes', 'tconst']
 
 df_d_title = prepare_dimenssion(df_fact, dimension_key, column_list)
 
@@ -281,9 +281,6 @@ df_fact = df_fact.select(
     'main_genre_key',
     'num_votes_type_key',
     'is_adult_key',
-    'start_year',
-    'end_year',
-    'runtime_minutes',
     'average_rating',
     'num_votes'
 )
