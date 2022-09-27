@@ -13,7 +13,7 @@ studant_name = ""
 # COMMAND ----------
 
 def clean_up():
-    dbutils.fs.rm(f"/mnt/datalake/studants/{studant_name}/silver/imdb", True)
+    dbutils.fs.rm(f"/mnt/datalake/silver/{studant_name}/imdb", True)
     spark.sql(f"DROP DATABASE IF EXISTS silver_{studant_name}_imdb CASCADE")
     
 clean_up()

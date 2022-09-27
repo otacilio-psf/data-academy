@@ -55,7 +55,7 @@ print(df_fact.columns)
 # COMMAND ----------
 
 # Select dimension columns
-df_d_title = df_fact.select('primary_title', 'original_title', 'tconst')
+df_d_title = df_fact.select('primary_title', 'original_title', 'start_year', 'end_year', 'runtime_minutes')
 
 # Make sure they are unique
 df_d_title = df_d_title.distinct()
@@ -69,7 +69,7 @@ window_spec = Window.partitionBy(lit(1)).orderBy(lit(1))
 df_d_title = df_d_title.withColumn('title_key_2', row_number().over(window_spec))
 
 # Select column order (key + other columns)
-df_d_title = df_d_title.select('title_key_1', 'title_key_2', 'primary_title', 'original_title', 'tconst')
+df_d_title = df_d_title.select('title_key_1', 'title_key_2', 'primary_title', 'original_title', 'start_year', 'end_year', 'runtime_minutes', 'tconst')
 
 # COMMAND ----------
 
@@ -84,7 +84,7 @@ df_d_title_join = df_d_title.select('tconst', 'title_key_2')
 _df_fact = df_fact.join(df_d_title_join, on="tconst", how="left")
 
 # drop old columns
-_df_fact = _df_fact.drop('primary_title', 'original_title', 'tconst')
+_df_fact = _df_fact.drop('primary_title', 'original_title', 'start_year', 'end_year', 'runtime_minutes', 'tconst')
 
 # COMMAND ----------
 
@@ -121,7 +121,7 @@ def change_fact_dataframe(f_df, d_df, f_key, d_key, column_list):
 # COMMAND ----------
 
 dimension_key = "title_key"
-d_title_cl = ['primary_title', 'original_title', 'tconst']
+d_title_cl = ['primary_title', 'original_title', 'start_year', 'end_year', 'runtime_minutes', 'tconst']
 
 df_d_title = prepare_dimenssion(df_fact, dimension_key, d_title_cl)
 
