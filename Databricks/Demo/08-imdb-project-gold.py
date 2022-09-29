@@ -55,7 +55,7 @@ print(df_fact.columns)
 # COMMAND ----------
 
 # Select dimension columns
-df_d_title = df_fact.select('primary_title', 'original_title', 'start_year', 'end_year', 'runtime_minutes')
+df_d_title = df_fact.select('tconst','primary_title', 'original_title', 'start_year', 'end_year', 'runtime_minutes')
 
 # Make sure they are unique
 df_d_title = df_d_title.distinct()
